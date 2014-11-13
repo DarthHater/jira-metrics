@@ -1,0 +1,337 @@
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("visualization", "1", {packages:["corechart"]});
+      google.setOnLoadCallback(drawPointChart);
+      function drawPointChart() {
+        var data = google.visualization.arrayToDataTable([
+            ['Type', 'Points'],
+            ['Completed', <%= sprint.contents.completedIssuesEstimateSum.value %>],
+            ['Incompleted', <%= sprint.contents.incompletedIssuesEstimateSum.value %>],
+            ['Punted', <%= sprint.contents.puntedIssuesEstimateSum.value %>],
+        ]);
+
+        var options = {
+          title: 'Sprint Issue Points',
+          pieHole: 0.3,
+          height: 300,
+          width: 300,
+          chartArea:{left:20,top:20,width:"100%",height:"100%"},  
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+        chart.draw(data, options);
+      }
+    </script>
+    <script type="text/javascript">
+      google.load("visualization", "1", {packages:["corechart"]});
+      google.setOnLoadCallback(drawPointChart);
+      function drawPointChart() {
+        var data = google.visualization.arrayToDataTable([
+            ['Type', 'Points'],
+            ['Feature', <%= newFeature.total  %>],
+            ['Improvement', <%= newImprovement.total %>],
+            ['Maintenance', <%= newMaintenance.total %>],
+            ['Refactor', <%= newRefactor.total %>],
+            ['Bugs', <%= newBugs.total %>],
+            ['Non Functional', <%= nonFunctionalStories %>],
+        ]);
+
+        var options = {
+          title: 'Work Item Breakdown',
+          pieHole: 0.3,
+          height: 300,
+          width: 300,
+          chartArea:{left:20,top:20,width:"100%",height:"100%"},  
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('workitemchart'));
+        chart.draw(data, options);
+      }
+    </script>
+    <script type="text/javascript">
+      google.load("visualization", "1", {packages:["corechart"]});
+      google.setOnLoadCallback(drawPointChart);
+      function drawPointChart() {
+        var data = google.visualization.arrayToDataTable([
+            ['Type', 'Number'],
+            ['Bug', <%= unresolvedBugs  %>],
+            ['Open Stories', <%= openStories %>],
+            ['Ready Stories', <%= readyStories %>],
+        ]);
+
+        var options = {
+          title: 'Backlog Item Breakdown',
+          pieHole: 0.3,
+          height: 300,
+          width: 300,
+          chartArea:{left:20,top:20,width:"100%",height:"100%"},  
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('backlogitemchart'));
+        chart.draw(data, options);
+      }
+    </script>
+    <script type='text/javascript'>
+      google.load('visualization', '1', {packages:['gauge']});
+      var accuracy = 0;
+      var completed = <%= sprint.contents.completedIssuesEstimateSum.value %>;
+      var total = <%= sprint.contents.allIssuesEstimateSum.value %>;
+      if (  completed < total  ) {
+        accuracy = Math.floor((completed / total) * 100);
+      }
+      else {
+        accuracy = Math.floor((total / completed) * 100);
+      }
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Label', 'Value'],
+          ['Accuracy', accuracy],
+        ]);
+
+        var options = {
+          width: 275, height: 275,
+          greenFrom: 80, greenTo: 100,
+          yellowFrom:50, yellowTo: 80,
+          redFrom: 0, redTo: 50,
+          minorTicks: 5
+        };
+
+        var chart = new google.visualization.Gauge(document.getElementById('chart_div'));
+        chart.draw(data, options);
+      }
+    </script>
+<div class="page-header">
+  <button type="button" id="backButton" class="btn btn-lg btn-default pull-right">Back To Sprints</button>
+  <h1>Metrics <small>Sprint: <%= sprint.sprint.name %></small></h1>
+</div>
+<div class="row">
+<div class="col-md-4">
+<ul class="list-group">
+  <li class="list-group-item">
+    <span class="badge"><%= sprint.sprint.startDate %></span>
+    Sprint Start Date
+  </li>
+<ul>
+</div>
+<div class="col-md-4">
+<ul class="list-group">
+  <li class="list-group-item">
+    <span class="badge"><%= sprint.sprint.endDate %></span>
+    Sprint End Date
+  </li>
+</ul>
+</div>
+<div class="col-md-4">
+<ul class="list-group">
+  <li class="list-group-item">
+    <span class="badge"><%= sprint.sprint.state %></span>
+    Sprint Status
+  </li>
+</ul>
+</div>
+</div>
+<div class="row">
+<div class="col-md-4">
+<h3>Sprint Summary</h3>
+<div id="donutchart"></div>
+</div>
+<div class="col-md-4">
+<h3>Estimation Accuracy</h3>
+<div id="chart_div"></div>
+</div>
+<div class="col-md-4">
+<h3>Work Item Info</h3>
+<div id="workitemchart"></div>
+</div>
+</div>
+<div class="row">
+<div class="col-md-4">
+<h3>Product Backlog Details</h3>
+<div id="backlogitemchart"></div>
+</div>
+<div class="col-md-4">
+<h3>Work Item List</h3>
+<ul class="list-group">
+  <li class="list-group-item list-group-item-danger">
+    <span class="badge"><%= failedInUat.total %></span>
+    Stories Failed In UAT
+  </li>
+  <li class="list-group-item list-group-item-danger">
+    <span class="badge"><%= newBugs.total %></span>
+    Bugs
+  </li>
+  <li class="list-group-item list-group-item-success">
+    <span class="badge"><%= newFeature.total %></span>
+    Feature Stories
+  </li>
+  <li class="list-group-item list-group-item-success">
+    <span class="badge"><%= newImprovement.total %></span>
+    Improvement Stories
+  </li>
+  <li class="list-group-item list-group-item-success">
+    <span class="badge"><%= newMaintenance.total %></span>
+    Maintenance Stories
+  </li>
+  <li class="list-group-item list-group-item-success">
+    <span class="badge"><%= newRefactor.total %></span>
+    Re-factor Stories
+  </li>
+    <li class="list-group-item list-group-item-success">
+    <span class="badge"><%= nonFunctionalStories %></span>
+    Non Functional Stories (Tech Debt, Spikes)
+  </li>
+</ul>
+</div>
+<div class="col-md-4">
+<h3>Sprint Velocity</h3>
+<ul class="list-group">
+  <li class="list-group-item">
+    <span class="badge"><%= sprint.contents.completedIssuesEstimateSum.value %></span>
+    Complete
+  </li>
+  <li class="list-group-item">
+    <span class="badge"><%= sprint.contents.incompletedIssuesEstimateSum.value %></span>
+    Incomplete
+  </li>
+  <li class="list-group-item">
+    <span class="badge"><%= sprint.contents.puntedIssuesEstimateSum.value %></span>
+    Punted
+  </li>
+  <li class="list-group-item">
+    <span class="badge"><%= sprint.contents.allIssuesEstimateSum.value %></span>
+    Total
+  </li>
+</ul>
+</div>
+</div>
+<h3>Issues Added After Sprint Start</h3>
+<div class="table-responsive">
+<table class="table table-striped">
+  <tr>
+    <th>
+      Issue
+    </th>
+  </tr>
+<% _.each(burndown.changes, function(change, key) { %>
+  <% if (key > burndown.startTime && change[0].added == true) { %>
+    <tr>
+      <td><%= change[0].key %></td>
+    </tr>
+  <% } %>
+<% }) %>
+</table>
+</div>
+<h3>Completed Issues</h3>
+<div class="table-responsive">
+<table class="table table-striped">
+    <tr>
+        <th>
+            ID
+        </th>
+        <th>
+            Summary
+        </th>
+        <th>
+            Type
+        </th>
+        <th>
+            Estimate
+        </th>
+    </tr>
+<% _.each(sprint.contents.completedIssues, function (issue) { %>
+    <tr>
+        <td>
+            <%= issue.key %>
+        </td>
+        </td>
+        <td>
+            <%= issue.summary %>
+        </td>
+        <td>
+            <%= issue.typeName %> 
+        </td>
+        <td>
+        <%= issue.estimateStatistic.statFieldValue.value %>
+        </td>
+    </tr>
+<% }) %>
+</table>
+</div>
+<h3>Incomplete Issues</h3>
+<div class="table-responsive">
+<table class="table table-striped">
+    <tr>
+        <th>
+            ID
+        </th>
+        <th>
+            Summary
+        </th>
+        <th>
+            Type
+        </th>
+        <th>
+            Estimate
+        </th>
+    </tr>
+<% _.each(sprint.contents.incompletedIssues, function (issue) { %>
+    <tr>
+        <td>
+            <%= issue.key %>
+        </td>
+        </td>
+        <td>
+            <%= issue.summary %>
+        </td>
+        <td>
+            <%= issue.typeName %> 
+        </td>
+        <td>
+        <%= issue.estimateStatistic.statFieldValue.value %>
+        </td>
+    </tr>
+<% }) %>
+</table>
+</div>
+<h3>Punted Issues</h3>
+<div class="table-responsive">
+<table class="table table-striped">
+    <tr>
+        <th>
+            ID
+        </th>
+        <th>
+            Summary
+        </th>
+        <th>
+            Type
+        </th>
+        <th>
+            Estimate
+        </th>
+    </tr>
+<% _.each(sprint.contents.puntedIssues, function (issue) { %>
+    <tr>
+        <td>
+            <%= issue.key %>
+        </td>
+        </td>
+        <td>
+            <%= issue.summary %>
+        </td>
+        <td>
+            <%= issue.typeName %> 
+        </td>
+        <td>
+        <%= issue.estimateStatistic.statFieldValue.value %>
+        </td>
+    </tr>
+<% }) %>
+</table>
+</div>
+<script>
+    $("#backButton").click(function(){
+        window.location = "/report/board/<%= board %>";
+    });
+</script>

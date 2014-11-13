@@ -1,0 +1,22 @@
+<div class="page-header">
+  <h1>Metrics <small></small></h1>
+</div>
+<form role="form">
+	<div class="form-group">
+<label for="selectSprint">Pick An Object Type</label>
+</p>
+<select class="form-control input-lg" id="selectBoard">
+<% _.each(objects, function (object) { %>
+    <option value="<%= object.objectId %>"><%= object.objectName %></option>
+<% }) %>
+</select>
+</div>
+<button type="button" id="submitButton" class="btn btn-lg btn-primary pull-right">Submit</button>
+</form>
+<script>
+    $("#submitButton").click(function(){
+        var boardid = $("#selectBoard").val();
+        var url = "/analytics/object/" + boardid;
+        document.location.href = url;
+    });
+</script>

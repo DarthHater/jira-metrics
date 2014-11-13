@@ -1,0 +1,89 @@
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript">
+      google.load("visualization", "1", {packages:["corechart"]});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Sprint', 'Points Completed', 'Points Planned', 'Variance'],
+          <% _.each(sprintReport, function(sprint) { %>
+            ['<%= sprint.sprint.name %>', 
+            <%= sprint.contents.completedIssuesEstimateSum.value %>, 
+            <%= sprint.contents.allIssuesEstimateSum.value %>, 
+            <%= sprint.contents.allIssuesEstimateSum.value - sprint.contents.completedIssuesEstimateSum.value %>
+            ],
+          <% }) %>
+        ]);
+
+        var options = {
+          title: 'Team Performance',
+          legend: { position: 'bottom' }
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+      }
+    </script>
+<div class="page-header">
+  <button type="button" id="backButton" class="btn btn-lg btn-default pull-right">Back To Boards</button>
+  <h1>Metrics<small> Product: <%= projectKey %></small></h1>
+</div>
+<div class="row">
+<div class="col-md-3">
+<ul class="list-group">
+  <li class="list-group-item">
+    <span class="badge"><%= unresolvedBugs %></span>
+    Open Bugs
+  </li>
+<ul>
+</div>
+<div class="col-md-3">
+<ul class="list-group">
+  <li class="list-group-item">
+    <span class="badge"><%= openStories %></span>
+    Open Stories
+  </li>
+</ul>
+</div>
+<div class="col-md-3">
+<ul class="list-group">
+  <li class="list-group-item">
+    <span class="badge"><%= readyStories %></span>
+    Ready Stories
+  </li>
+</ul>
+</div>
+<div class="col-md-3">
+<ul class="list-group">
+  <li class="list-group-item">
+    <span class="badge"><%= Math.floor(averageVelocity) %></span>
+    Average Velocity
+  </li>
+</ul>
+</div>
+</div>
+<div id="chart_div" style="width: 100%; height: 500px;"></div>
+<form role="form">
+	<div class="form-group">
+<label for="selectSprint">Pick A Sprint For Your Chosen Board</label>
+</p>
+<select class="form-control input-lg" id="selectSprint">
+<% _.each(sprints.sprints.reverse(), function (sprint) { %>
+    <option value="<%= sprint.id %>"><%= sprint.name %></option>
+<% }) %>
+
+</select>
+</div>
+<button type="button" id="submitButton" class="btn btn-lg btn-primary pull-right">Submit</button> 
+</form>
+<script>
+    $("#submitButton").click(function(){
+        var boardid = <%= sprints.rapidViewId %>;
+        var sprintid = $("#selectSprint").val();
+        var url = "/report/board/" + boardid + "/sprint/" + sprintid;
+        document.location.href = url;
+    });
+
+    $("#backButton").click(function(){
+        window.location = "/report/board";
+    });
+</script>
