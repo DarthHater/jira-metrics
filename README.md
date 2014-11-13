@@ -1,4 +1,4 @@
-# ngs-metrics
+# jira-metrics
 ### a Sails application
 This is a simple, and potentially a bit crappy app that helps get some standard Agile Metrics out of JIRA and displays them using Google Charts and Twitter's Bootstrap. To get this running you'll need to change some settings in config/local.js:
 ```javascript
